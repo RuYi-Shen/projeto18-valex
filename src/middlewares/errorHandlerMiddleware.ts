@@ -1,6 +1,11 @@
-import {Request, Response, NextFunction} from "express";
+import { Request, Response, NextFunction } from "express";
 
-export default function errorHandler (error, req: Request, res: Response, next: NextFunction) {
+export default function errorHandler(
+  error: { response: { status: number } },
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   console.log(error);
   if (error.response) {
     return res.sendStatus(error.response.status);
