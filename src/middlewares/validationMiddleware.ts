@@ -119,3 +119,28 @@ export async function validatePassword(
     res.status(500).send(error);
   }
 }
+
+export async function validateCardId(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  const { cardId } = req.body;
+  try {
+    const card = await cardRepository.findById(cardId);
+    if (!card) {
+      return res.status(401).send("Card not found");
+    }
+    if (convertToDate(card.expirationDate) < new Date()) {
+      return res.status(401).send("Card expired");
+    }
+    if (!card.password) {
+      return res.status(401).send("Card is not activated");
+    }
+    res.locals.card = card;
+    next();
+  } catch (error) {
+    console.log(error);
+    res.status(500).send(error);
+  }
+}
