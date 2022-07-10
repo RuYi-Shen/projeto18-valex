@@ -16,8 +16,19 @@ export async function createCard(req: Request, res: Response) {
 export async function activateCard(req: Request, res: Response) {
   const cardInfo = req.body;
   try {
-    const card = await cardService.activateCard(cardInfo);
+    await cardService.activateCard(cardInfo);
     res.sendStatus(200);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send(error);
+  }
+}
+
+export async function getBalance(req: Request, res: Response) {
+  const cardInfo = req.body;
+  try {
+    const balance = await cardService.getBalance(cardInfo);
+    res.send(balance);
   } catch (error) {
     console.log(error);
     res.status(500).send(error);

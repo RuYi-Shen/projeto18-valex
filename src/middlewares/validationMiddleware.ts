@@ -68,7 +68,7 @@ export async function validateCard(
   res: Response,
   next: NextFunction
 ) {
-  const { cardId, CVC } = req.body;
+  const { cardId, CVC, password } = req.body;
   try {
     const card = await cardRepository.findById(cardId);
     if (!card) {
@@ -77,7 +77,7 @@ export async function validateCard(
     if (convertToDate(card.expirationDate) < new Date()) {
       return res.status(401).send("Card expired");
     }
-    if (card.password) {
+    if (card.password && password) {
       return res.status(401).send("Card is already activated");
     }
     const crypter = new cryptr(process.env.SECRET_KEY || "shen-driven");
