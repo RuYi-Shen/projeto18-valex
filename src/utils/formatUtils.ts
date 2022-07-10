@@ -25,3 +25,8 @@ export function formatName(name: String) {
     .replace(/\s{2,}/g, " ")
     .trim();
 }
+
+export function convertToDate(date: String) {
+  const [month, year] = date.split("/").map(Number);
+  return new Date(year+2000, month - 1);
+}

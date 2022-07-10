@@ -1,6 +1,7 @@
 import { faker } from "@faker-js/faker";
 import cryptr from "cryptr";
-import { insert, TransactionTypes } from "../repositories/cardRepository.js";
+import bcrypt from "bcrypt";
+import { insert, TransactionTypes, update } from "../repositories/cardRepository.js";
 import { formatName, formatDate } from "../utils/formatUtils.js";
 
 export async function createCard(cardInfo: { name: string; type: TransactionTypes; employeeId: number }) {
@@ -25,4 +26,17 @@ export async function createCard(cardInfo: { name: string; type: TransactionType
     type,
   }
   insert(cardData);
+  cardData.securityCode = CVC;
+  return cardData;
+}
+
+export async function activateCard(cardInfo: { cardId: number; password: string }) {
+  let { cardId, password } = cardInfo;
+  password = await bcrypt.hash(password, 10);
+ 
+  const cardData = {
+    password,
+    isBlocked: false,
+  }
+  update(cardId, cardData);
 }

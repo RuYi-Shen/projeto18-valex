@@ -5,7 +5,8 @@ export const createCardInfo = Joi.object({
   type: Joi.string().valid('groceries', 'restaurants', 'transport', 'education', 'health').required(),
 });
 
-export const signInSchema = Joi.object({
-  email: Joi.string().email().required(),
-  password: Joi.string().required(),
+export const activateCardInfo = Joi.object({
+  cardId: Joi.number().required(),
+  password: Joi.string().length(4).regex(/^\d+$/).required(),
+  CVC: Joi.string().length(3).regex(/^\d+$/).required(),
 });

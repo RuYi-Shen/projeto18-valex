@@ -1,6 +1,9 @@
 import { findByApiKey } from "../repositories/companyRepository.js";
-import { findById } from "../repositories/employeeRepository.js";
+import * as employeeRepository from "../repositories/employeeRepository.js";
+import * as cardRepository from "../repositories/cardRepository.js";
 import { Request, Response, NextFunction } from "express";
+import { convertToDate } from "../utils/formatUtils.js";
+import cryptr from "cryptr";
 
 export function validateSchema(schema: any) {
   return async (req: Request, res: Response, next: NextFunction) => {
@@ -45,14 +48,44 @@ export async function validateEmployee(
 ) {
   const { employeeId } = req.body;
   try {
-    const employee = await findById(employeeId);
-    if (employee.length === 0) {
+    const employee = await employeeRepository.findById(employeeId);
+    if (!employee) {
       return res.status(401).send("Unauthorized");
     }
     if (employee.companyId !== res.locals.company.id) {
       return res.status(401).send("Unauthorized");
     }
     res.locals.employee = employee;
+    next();
+  } catch (error) {
+    console.log(error);
+    res.status(500).send(error);
+  }
+}
+
+export async function validateCard(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  const { cardId, CVC } = req.body;
+  try {
+    const card = await cardRepository.findById(cardId);
+    if (!card) {
+      return res.status(401).send("Card not found");
+    }
+    if (convertToDate(card.expirationDate) < new Date()) {
+      return res.status(401).send("Card expired");
+    }
+    if (card.password) {
+      return res.status(401).send("Card is already activated");
+    }
+    const crypter = new cryptr(process.env.SECRET_KEY || "shen-driven");
+    const decryptedCVC = crypter.decrypt(card.securityCode);
+    if (decryptedCVC !== CVC) {
+      return res.status(401).send("Invalid CVC");
+    }
+    res.locals.card = card;
     next();
   } catch (error) {
     console.log(error);
