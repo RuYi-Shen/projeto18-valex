@@ -7,7 +7,7 @@ const cardRouter = Router();
 cardRouter.post("/create",validateApiKey, validateSchema(createCardInfo), validateEmployee, createCard);
 cardRouter.post("/activate", validateSchema(activateCardInfo), validateCard, activateCard);
 //cardRouter.get("/visualize/card", visualizeCard);
-cardRouter.get("/visualize/balance", validateCard, getBalance);
+cardRouter.get("/balance", validateCard, getBalance);
 cardRouter.post("/lock", validatePassword, lockCard);
 cardRouter.post("/unlock", validatePassword, unlockCard);
 

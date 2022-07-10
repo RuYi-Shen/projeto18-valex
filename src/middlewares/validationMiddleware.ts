@@ -1,6 +1,7 @@
 import { findByApiKey } from "../repositories/companyRepository.js";
 import * as employeeRepository from "../repositories/employeeRepository.js";
 import * as cardRepository from "../repositories/cardRepository.js";
+import * as businessRepository from "../repositories/businessRepository.js";
 import { Request, Response, NextFunction } from "express";
 import { convertToDate } from "../utils/formatUtils.js";
 import cryptr from "cryptr";
@@ -138,6 +139,28 @@ export async function validateCardId(
       return res.status(401).send("Card is not activated");
     }
     res.locals.card = card;
+    next();
+  } catch (error) {
+    console.log(error);
+    res.status(500).send(error);
+  }
+}
+
+export async function validateBusiness(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  const { businessId } = req.body;
+  try {
+    const business = await businessRepository.findById(businessId);
+    if (!business) {
+      return res.status(401).send("Business not found");
+    }
+    if (business.type !== res.locals.card.type) {
+      return res.status(401).send("Invalid business type");
+    }
+    res.locals.business = business;
     next();
   } catch (error) {
     console.log(error);
