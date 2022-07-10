@@ -28,5 +28,5 @@ export function formatName(name: String) {
 
 export function convertToDate(date: String) {
   const [month, year] = date.split("/").map(Number);
-  return new Date(year+2000, month - 1);
+  return new Date(year + 2000, month - 1);
 }

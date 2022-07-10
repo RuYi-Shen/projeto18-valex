@@ -1,7 +1,7 @@
 import { Router } from "express";
+import { createCardInfo, activateCardInfo } from "../schemas/cardSchema.js";
 import { validateApiKey, validateSchema, validateEmployee, validateCard, validatePassword } from "../middlewares/validationMiddleware.js";
 import { createCard, activateCard, getBalance, lockCard, unlockCard } from "../controllers/cardController.js";
-import { createCardInfo, activateCardInfo } from "../schemas/cardSchema.js";
 
 const cardRouter = Router();
 cardRouter.post("/create",validateApiKey, validateSchema(createCardInfo), validateEmployee, createCard);

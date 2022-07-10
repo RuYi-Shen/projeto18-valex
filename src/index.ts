@@ -1,9 +1,10 @@
 import cors from "cors";
+import dotenv from "dotenv";
 import express, { json } from "express";
 import "express-async-errors";
-import errorHandler from "./middlewares/errorHandlerMiddleware.js";
 import router from "./routers/index.js";
-import dotenv from "dotenv";
+import errorHandler from "./middlewares/errorHandlerMiddleware.js";
+
 dotenv.config();
 
 const app = express();
