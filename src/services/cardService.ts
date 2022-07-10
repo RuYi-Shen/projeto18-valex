@@ -56,3 +56,21 @@ export async function getBalance(cardInfo: { cardId: number }) {
     recharges,
   }
 }
+
+export async function lockCard(cardInfo: { cardId: number }) {
+  let { cardId } = cardInfo;
+ 
+  const cardData = {
+    isBlocked: true,
+  }
+  cardRepository.update(cardId, cardData);
+}
+
+export async function unlockCard(cardInfo: { cardId: number }) {
+  let { cardId } = cardInfo;
+ 
+  const cardData = {
+    isBlocked: false,
+  }
+  cardRepository.update(cardId, cardData);
+}

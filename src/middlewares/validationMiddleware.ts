@@ -4,6 +4,7 @@ import * as cardRepository from "../repositories/cardRepository.js";
 import { Request, Response, NextFunction } from "express";
 import { convertToDate } from "../utils/formatUtils.js";
 import cryptr from "cryptr";
+import bcrypt from "bcrypt";
 
 export function validateSchema(schema: any) {
   return async (req: Request, res: Response, next: NextFunction) => {
@@ -84,6 +85,32 @@ export async function validateCard(
     const decryptedCVC = crypter.decrypt(card.securityCode);
     if (decryptedCVC !== CVC) {
       return res.status(401).send("Invalid CVC");
+    }
+    res.locals.card = card;
+    next();
+  } catch (error) {
+    console.log(error);
+    res.status(500).send(error);
+  }
+}
+
+export async function validatePassword(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  const { cardId, password } = req.body;
+  try {
+    const card = await cardRepository.findById(cardId);
+    if (!card) {
+      return res.status(401).send("Card not found");
+    }
+    if (convertToDate(card.expirationDate) < new Date()) {
+      return res.status(401).send("Card expired");
+    }
+    const isValid = await bcrypt.compare(password, card.password);
+    if (!isValid) {
+      return res.status(401).send("Invalid password");
     }
     res.locals.card = card;
     next();
