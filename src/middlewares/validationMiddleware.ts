@@ -44,7 +44,7 @@ export async function validateEmployee(
   res: Response,
   next: NextFunction
 ) {
-  const { employeeId } = req.body;
+  const { employeeId, type } = req.body;
 
   const employee = await employeeRepository.findById(employeeId);
   if (!employee) {
@@ -52,6 +52,10 @@ export async function validateEmployee(
   }
   if (employee.companyId !== res.locals.company.id) {
     return res.status(401).send("Unauthorized");
+  }
+  const card = await cardRepository.findByTypeAndEmployeeId(type, employeeId);
+  if (card) {
+    return res.status(401).send("Card already exists");
   }
   res.locals.employee = employee;
   next();

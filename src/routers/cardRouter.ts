@@ -4,7 +4,7 @@ import { validateApiKey, validateSchema, validateEmployee, validateCard, validat
 import { createCard, activateCard, getBalance, lockCard, unlockCard } from "../controllers/cardController.js";
 
 const cardRouter = Router();
-cardRouter.post("/create",validateApiKey, validateSchema(createCardInfo), validateEmployee, createCard);
+cardRouter.post("/create", validateApiKey, validateSchema(createCardInfo), validateEmployee, createCard);
 cardRouter.post("/activate", validateSchema(activateCardInfo), validateCard, activateCard);
 //cardRouter.get("/visualize/card", visualizeCard);
 cardRouter.get("/balance", validateCard, getBalance);
